@@ -10,6 +10,10 @@ cd play-with-container
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker-compose](https://docs.docker.com/compose/install/)
 
+#### Create a `.env` file
+```bash
+Change .env.example to .env and modify the values as needed
+```
 #### Build the Docker containers
 ```bash
 docker-compose build

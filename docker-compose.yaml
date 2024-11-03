@@ -1,0 +1,88 @@
+services:
+  api-gateway-app:
+    container_name: api-gateway-app
+    build:
+      context: ./crud-master-py/srcs/api-gateway-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - my_network
+    restart: always
+    volumes:
+      - api-gateway-volume:/logs
+
+  billing-app:
+    container_name: billing-app
+    build:
+      context: ./crud-master-py/srcs/billing-app
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    networks:
+      - my_network
+    restart: always
+    volumes:
+      - billing-db-volume:/data
+
+  inventory-app:
+    container_name: inventory-app
+    build:
+      context: ./crud-master-py/srcs/inventory-app
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+    restart: always
+    volumes:
+      - inventory-db-volume:/data
+
+  rabbitmq:
+    container_name: RabbitMQ
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - my_network
+    restart: always
+
+  billing-db:
+    container_name: billing-database
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: billing_user
+      POSTGRES_PASSWORD: billing_password
+      POSTGRES_DB: billing_db
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+    restart: always
+    volumes:
+      - billing-db-volume:/var/lib/postgresql/data
+
+  inventory-db:
+    container_name: inventory-database
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: inventory_user
+      POSTGRES_PASSWORD: inventory_password
+      POSTGRES_DB: inventory_db
+    ports:
+      - "5433:5432"
+    networks:
+      - my_network
+    restart: always
+    volumes:
+      - inventory-db-volume:/var/lib/postgresql/data
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  billing-db-volume:
+  inventory-db-volume:
+  api-gateway-volume:
